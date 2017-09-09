@@ -6,17 +6,18 @@ import sys
 
 
 class RandomRenamer(object):
-    def __init__(self):
-        self.work_dir = os.getcwd()
-        if sys.argv > 2:
+    def __init__(self, path):
+        self.work_path = path
+        if len(sys.argv) > 2:
             raise TypeError('No command line arguments allowed.')
+        self.run()
 
     @staticmethod
     def _get_random_string():
         return ''.join(random.sample(string.ascii_lowercase, random.randint(5, 10)))
 
     def run(self):
-        for root, directories, files in os.walk(self.work_dir, topdown=False):
+        for root, directories, files in os.walk(self.work_path, topdown=False):
             print('root: {}'.format(root))
             print('dirs: {}'.format(directories))
             print('files: {}'.format(files))
@@ -31,4 +32,4 @@ class RandomRenamer(object):
                 os.rename('/'.join((root, directory)), '/'.join((root, self._get_random_string())))
 
 if '__main__' == __name__:
-    RandomRenamer().run()
+    RandomRenamer(os.getcwd())
