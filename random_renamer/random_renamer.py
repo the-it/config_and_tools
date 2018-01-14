@@ -10,7 +10,9 @@ class RandomRenamer(object):
         self.work_path = path
         if len(sys.argv) > 2:
             raise TypeError('No command line arguments allowed.')
-        self.run()
+        answer = input("Do you really want to rename all files in the directory {}? (type yes):".format(self.work_path))
+        if answer == "yes":
+            self.run()
 
     @staticmethod
     def _get_random_string():
@@ -30,6 +32,7 @@ class RandomRenamer(object):
                 os.rename('/'.join((root, file)), '/'.join((root, new_file)))
             for directory in directories:
                 os.rename('/'.join((root, directory)), '/'.join((root, self._get_random_string())))
+
 
 if '__main__' == __name__:
     RandomRenamer(os.getcwd())
