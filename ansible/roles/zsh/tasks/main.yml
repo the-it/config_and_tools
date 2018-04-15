@@ -1,0 +1,45 @@
+---
+- include_vars: password.yml
+
+- name: Installing Zsh and git
+  apt: pkg=zsh,git state=latest
+  register: installation
+  become: yes
+
+- name: Cloning  oh-my-zsh
+  git:
+    repo=https://github.com/robbyrussell/oh-my-zsh
+    dest=~/.oh-my-zsh
+  when: installation|success
+  register: cloning
+  become: no
+
+- name: Check whether .zshrc is original
+  command: awk /ZSH_THEME=\"robbyrussell\"/ ~/.zshrc
+  register: checkoriginalzshrc
+  changed_when: False
+  when: cloning|success
+
+- name: Creating new ~/.zshrc
+  copy:
+    content: ""
+    dest: ~/.zshrc
+    force: yes
+  when: checkoriginalzshrc.stdout | match("ZSH_THEME=\"robbyrussell\"")
+  become: no
+
+- name: Personal configuration
+  blockinfile:
+    path: ~/.zshrc
+    marker: "# {mark} ANSIBLE MANAGED BLOCK "
+    content: |
+      export ZSH=~/.oh-my-zsh
+      ZSH_THEME="ys"
+      plugins=(git)
+      source $ZSH/oh-my-zsh.sh
+
+- name: Change Shell to Zsh
+  expect:
+    command: "chsh -s /bin/zsh"
+    responses:
+      (?i)password: "{{ user_password }}"
