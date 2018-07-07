@@ -10,7 +10,7 @@
   git:
     repo=https://github.com/robbyrussell/oh-my-zsh
     dest=~/.oh-my-zsh
-  when: installation|success
+  when: installation is success
   register: cloning
   become: no
 
@@ -18,14 +18,14 @@
   command: awk /ZSH_THEME=\"robbyrussell\"/ ~/.zshrc
   register: checkoriginalzshrc
   changed_when: False
-  when: cloning|success
+  when: cloning is success
 
 - name: Creating new ~/.zshrc
   copy:
     content: ""
     dest: ~/.zshrc
     force: yes
-  when: checkoriginalzshrc.stdout | match("ZSH_THEME=\"robbyrussell\"")
+  when: checkoriginalzshrc.stdout is match("ZSH_THEME=\"robbyrussell\"")
   become: no
 
 - name: Personal configuration
@@ -38,8 +38,14 @@
       plugins=(git)
       source $ZSH/oh-my-zsh.sh
 
+- name: Check whether zsh is already standard shell
+  command: echo $SHELL
+  register: existing_shell
+  changed_when: False
+
 - name: Change Shell to Zsh
   expect:
     command: "chsh -s /bin/zsh"
     responses:
       (?i)password: "{{ user_password }}"
+  when: existing_shell.stdout is not match("/bin/zsh")
