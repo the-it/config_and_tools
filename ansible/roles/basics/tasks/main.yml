@@ -1,0 +1,48 @@
+---
+
+
+- name: build tools
+  apt:
+    name: autoconf,make
+    state: latest
+  register: installation
+  become: yes
+
+- name: python3.6
+  apt:
+    name: python3.6
+    state: latest
+  register: installation
+  become: yes
+
+- name: python3.7
+  apt:
+    name: python3.7
+    state: latest
+  register: installation
+  become: yes
+
+- name: check to see if pip is already installed
+  command: "pip --version"
+  ignore_errors: true
+  register: pip_is_installed
+  changed_when: false
+
+- block:
+
+  - name: download get-pip.py
+    get_url: url=https://bootstrap.pypa.io/get-pip.py  dest=/tmp
+
+  - name: install pip
+    command: "python /tmp/get-pip.py"
+    become: yes
+
+  - name: install pip3
+    command: "python3 /tmp/get-pip.py"
+    become: yes
+
+  - name: delete get-pip.py
+    file: state=absent path=/tmp/get-pip.py
+
+  when: pip_is_installed.rc != 0
+

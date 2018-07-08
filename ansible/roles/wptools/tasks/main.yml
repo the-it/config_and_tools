@@ -1,0 +1,12 @@
+---
+- name: libcurl4-openssl-dev,libssl-dev
+  apt:
+    name: libcurl4-openssl-dev,libssl-dev
+    state: latest
+  register: installation
+  become: yes
+
+- name: pip
+  pip:
+    name: wptools
+  become: yes

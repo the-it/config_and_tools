@@ -1,8 +1,10 @@
 ---
 - include_vars: password.yml
 
-- name: Installing autotools, make and libncurses5-dev
-  apt: pkg=libncurses5-dev,autoconf,make state=latest
+- name: libncurses5-dev
+  apt:
+    name: libncurses5-dev
+    state: latest
   register: installation
   become: yes
 
@@ -13,30 +15,25 @@
   register: cloning
   become: no
 
-- name: autoconf
-  command: autoconf
-  args:
-    chdir: /tmp/imgcat/
+- block:
+  - name: autoconf
+    command: autoconf
+    args:
+      chdir: /tmp/imgcat/
+
+  - name: configure
+    command: ./configure
+    args:
+      chdir: /tmp/imgcat/
+
+  - name: make
+    command: make
+    args:
+      chdir: /tmp/imgcat/
+
+  - name: install
+    command: make install
+    args:
+      chdir: /tmp/imgcat/
+    become: yes
   when: cloning.changed
-  register: autoconf
-
-- name: configure
-  command: ./configure
-  args:
-    chdir: /tmp/imgcat/
-  when: autoconf.changed
-  register: configure
-
-- name: make
-  command: make
-  args:
-    chdir: /tmp/imgcat/
-  when: configure.changed
-  register: make
-
-- name: install
-  command: make install
-  args:
-    chdir: /tmp/imgcat/
-  become: yes
-  when: make.changed
