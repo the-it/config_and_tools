@@ -1,0 +1,7 @@
+---
+- name: install
+  apt:
+    name: neofetch
+    state: latest
+  register: installation
+  become: yes

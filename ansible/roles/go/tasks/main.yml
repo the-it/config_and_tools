@@ -1,0 +1,13 @@
+---
+- name: golang-go
+  apt:
+    name: golang-go
+    state: latest
+  register: installation
+  become: yes
+
+- name: set GOPATH for all users
+  copy:
+    src: go-path.sh
+    dest: /etc/profile.d
+  become: yes

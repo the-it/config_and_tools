@@ -1,5 +1,9 @@
 - hosts: localhost
   roles:
+    - go
+    - googler
     - imgcat
+    - neofetch
+    #- scc later ... I have to learn some stuff about go package management
     - wptools
     - zsh

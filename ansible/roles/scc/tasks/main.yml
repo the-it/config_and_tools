@@ -1,0 +1,14 @@
+---
+- name: Cloning scc_repo
+  git:
+    repo=https://github.com/boyter/scc.git
+    dest=/tmp/scc
+  register: cloning
+  become: no
+
+- block:
+  - name: go install
+    command: go install
+    args:
+      chdir: /tmp/scc/
+  #when: cloning.changed

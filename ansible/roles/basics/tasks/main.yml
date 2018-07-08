@@ -1,5 +1,11 @@
 ---
 
+- name: ansible
+  apt:
+    name: ansible
+    state: latest
+  register: installation
+  become: yes
 
 - name: build tools
   apt:
@@ -45,4 +51,3 @@
     file: state=absent path=/tmp/get-pip.py
 
   when: pip_is_installed.rc != 0
-
